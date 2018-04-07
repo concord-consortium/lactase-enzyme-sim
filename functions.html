@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <style>
+    html * { margin: 0; padding: 0; }
+    body {
+      font: 12px verdana, arial, helvetica, sans-serif;
+      list-style-type: none;
+      background: white;
+    }
+    html, body, #app {
+      height: 100%;
+    }
+    #app {
+      padding: 20px;
+    }
+    textarea {
+      font-size: 14px;
+      display: inline-block;
+    }
+    input {
+      width: 600px;
+      font-size: 12px;
+      margin-top: 10px;
+    }
+    .chart {
+      display: inline-block;
+    }
+    .func {
+      text-align: center;
+      width: 800px;
+      margin-bottom: 30px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="app">
+  <div class="func">
+    <h1>pH</h1>
+    <div class="chart" id="pH-chart"></div>
+    <textarea id="pH-textarea" rows="20" cols="20">
+[
+  [0, 0],
+  [3.2, 0.01],
+  [3.8, 0.02],
+  [4.1, 0.10],
+  [5.0, 0.65],
+  [5.6, 0.90],
+  [6.0, 1.00],
+  [6.3, 0.95],
+  [6.6, 0.85],
+  [7.1, 0.70],
+  [7.3, 0.45],
+  [7.8, 0.20],
+  [8.3, 0.15],
+  [9.1, 0.07],
+  [10, 0.01],
+  [14, 0]
+]
+    </textarea>
+    <p>
+      Interactive JSON parameter: <input id="pH-param" type="text">
+    </p>
+  </div>
+  <div class="func">
+    <h1>Temperature</h1>
+    <div class="chart" id="temperature-chart"></div>
+    <textarea id="temperature-textarea" rows="20" cols="20">
+[
+  [0, 0.4],
+  [10, 0.5],
+  [15, 0.7],
+  [20, 0.9],
+  [23, 0.95],
+  [30, 1],
+  [35, 0.99],
+  [40, 0.97],
+  [50, 0.90],
+  [55, 0.8],
+  [60, 0.25],
+  [65, 0.05],
+  [70, 0.02],
+  [80, 0],
+  [100, 0]
+]
+    </textarea>
+    <p>
+      Interactive JSON parameter: <input id="temperature-param" type="text">
+    </p>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+  google.charts.load('current', {packages: ['corechart', 'line']});
+  google.charts.setOnLoadCallback(drawCharts);
+
+  const phTextarea = document.getElementById('pH-textarea');
+  phTextarea.addEventListener('change', drawPhChart);
+
+  const tempTextarea = document.getElementById('temperature-textarea');
+  tempTextarea.addEventListener('change', drawTempChart);
+
+  function drawChart (prop, ticks = undefined) {
+    const data = new google.visualization.DataTable();
+    data.addColumn('number', prop);
+    data.addColumn('number', 'Lactase activity');
+    const points = JSON.parse(document.getElementById(prop + '-textarea').value);
+    document.getElementById(prop + '-param').value = '"' + prop.toLowerCase() + 'Func": ' + JSON.stringify(points)
+    data.addRows(points);
+    const options = {
+      width: 600,
+      height: 300,
+      hAxis: {
+        title: prop,
+        ticks: ticks
+      },
+      vAxis: {
+        title: 'Lactase activity'
+      },
+    };
+    const chart = new google.visualization.LineChart(document.getElementById(prop + '-chart'));
+    chart.draw(data, options);
+  }
+
+  function drawPhChart () {
+    drawChart('pH', [0, 2, 4, 6, 8, 10, 12, 14]);
+  }
+
+  function drawTempChart () {
+    drawChart('temperature');
+  }
+
+  function drawCharts () {
+    drawPhChart();
+    drawTempChart();
+  }
+</script>
+</body>
+</html>

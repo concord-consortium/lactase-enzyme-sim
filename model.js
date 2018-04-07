@@ -1,10 +1,11 @@
-const MIN_PER_STEP = 0.03;
-const TICK_INTERVAL = 10;
+const STEP_INTERVAL = 150; // ms
+const SPEED_RATIO = 100; // 50x faster than real time
+const MIN_PER_STEP = STEP_INTERVAL / (60 * 1000) * SPEED_RATIO;
+const MAX_TIME = 10; // min
 
 class Model {
   constructor () {
-    this.setInitialProps();
-
+    // Inputs:
     this.ph = 7;
     this.lactose = 500;
     this.temperature = 55;
@@ -12,14 +13,15 @@ class Model {
     this.temperatureFuncDef = [];
     this.phFunc = null;
     this.temperatureFunc = null;
+    // Outputs:
+    this.time = 0;
+    this.glucose = 0;
 
     this.step = this.step.bind(this);
   }
 
-  setInitialProps () {
-    this.time = 0;
-    this.glucose = 0;
-    this.stepIdx = 0;
+  get experimentFinished () {
+    return this.lactose <= 0 || this.time > MAX_TIME
   }
 
   start () {
@@ -30,38 +32,32 @@ class Model {
       .domain(this.temperatureFuncDef.map(p => p[0]))
       .range(this.temperatureFuncDef.map(p => p[1]));
 
-    this._raf = window.requestAnimationFrame(this.step);
+    this._intId = setInterval(this.step, STEP_INTERVAL);
     window.document.body.style.background = 'red';
     this.startCallback();
   }
 
   stop () {
-    window.cancelAnimationFrame(this._raf);
+    clearInterval(this._intId);
     window.document.body.style.background = 'white';
     this.stopCallback();
   }
 
   getSpeed () {
-    return 0.01 * this.temperatureFunc(this.temperature) * this.phFunc(this.ph) + (Math.random() * 0.02 - 0.01);
+    return (0.3 + (Math.random() * 0.3 - 0.15)) * this.temperatureFunc(this.temperature) * this.phFunc(this.ph);
   }
 
   step () {
-    this._raf = window.requestAnimationFrame(this.step);
-
-    this.stepIdx += 1;
+    if (this.experimentFinished) {
+      this.stop();
+      return;
+    }
     this.time += MIN_PER_STEP;
     const speed = this.getSpeed();
-    const diff = this.lactose * speed;
+    const diff = this.lactose * speed * MIN_PER_STEP;
     this.glucose += diff;
     this.lactose -= diff;
-
-    if (this.lactose <= 0 || this.time > 10) {
-      this.stop();
-    }
-
-    if (this.stepIdx % TICK_INTERVAL === 0) {
-      this.stepCallback();
-    }
+    this.stepCallback();
   }
 }
 

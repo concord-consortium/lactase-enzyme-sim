@@ -20,11 +20,17 @@
     textarea {
       font-size: 14px;
       display: inline-block;
+      margin-bottom: 20px;
     }
     input {
       width: 600px;
       font-size: 12px;
       margin-top: 10px;
+    }
+    .instr {
+      max-width: 900px;
+      font-size: 14px;
+      margin-bottom: 20px;
     }
     .chart {
       display: inline-block;
@@ -34,11 +40,28 @@
       width: 800px;
       margin-bottom: 30px;
     }
+    .param {
+      border: 1px solid #aaa;
+      color: #666;
+      width: 580px;
+      display: inline-block;
+      vertical-align: middle;
+      text-align: left;
+      padding: 3px;
+    }
   </style>
 </head>
 <body>
 
 <div id="app">
+  <div class="instr">
+    Graphs visible below preset mapping functions used by the Lactase Enzyme model. You can tweak them using large text
+    area fields. Graphs and Interactive JSON parameters will be updated automatically.
+    To test new functions, go to the Lactase Enzyme Interactive available at
+    <a href="http://lab.concord.org/interactives.html#interactives/inquiry-space/lactase.json">http://lab.concord.org/interactives.html#interactives/inquiry-space/lactase.json</a>,
+    open Interactive Editor and look for "phFunc" and "temperatureFunc" model properties. Then, you can copy-paste new values
+    and update Interactive.
+  </div>
   <div class="func">
     <h1>pH</h1>
     <div class="chart" id="pH-chart"></div>
@@ -62,35 +85,35 @@
   [14, 0]
 ]
     </textarea>
-    <p>
-      Interactive JSON parameter: <input id="pH-param" type="text">
-    </p>
+    <div>
+      Interactive JSON parameter: <div class="param" id="pH-param"></div>
+    </div>
   </div>
   <div class="func">
     <h1>Temperature</h1>
     <div class="chart" id="temperature-chart"></div>
     <textarea id="temperature-textarea" rows="20" cols="20">
 [
-  [0, 0.4],
+  [0, 0.2],
   [10, 0.5],
   [15, 0.7],
   [20, 0.9],
   [23, 0.95],
-  [30, 1],
-  [35, 0.99],
-  [40, 0.97],
-  [50, 0.90],
-  [55, 0.8],
-  [60, 0.25],
-  [65, 0.05],
-  [70, 0.02],
+  [30, 0.98],
+  [37, 1.00],
+  [40, 0.95],
+  [47, 0.45],
+  [50, 0.35],
+  [60, 0.05],
+  [65, 0.02],
+  [70, 0.01],
   [80, 0],
   [100, 0]
 ]
     </textarea>
-    <p>
-      Interactive JSON parameter: <input id="temperature-param" type="text">
-    </p>
+    <div>
+      Interactive JSON parameter: <div class="param" id="temperature-param"></div>
+    </div>
   </div>
 </div>
 
@@ -110,7 +133,7 @@
     data.addColumn('number', prop);
     data.addColumn('number', 'Lactase activity');
     const points = JSON.parse(document.getElementById(prop + '-textarea').value);
-    document.getElementById(prop + '-param').value = '"' + prop.toLowerCase() + 'Func": ' + JSON.stringify(points)
+    document.getElementById(prop + '-param').textContent = '"' + prop.toLowerCase() + 'FuncDef": ' + JSON.stringify(points)
     data.addRows(points);
     const options = {
       width: 600,

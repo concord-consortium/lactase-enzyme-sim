@@ -77,6 +77,10 @@
   var reading = document.getElementById('reading');
   var solution = document.getElementById('solution');
 
+  function lactoseToOpacity () {
+    solution.style.fillOpacity = 0.4 + (model.lactose / 1000) * 0.6;
+  }
+
   model.startCallbacks.push(function () {
     glucoseMeter.classList.add('active');
   });
@@ -85,10 +89,11 @@
   });
   model.stepCallbacks.push(function () {
     reading.textContent = model.glucose.toFixed(2);
+    lactoseToOpacity();
   });
   model.inputChangeCallbacs.push(function (name, value) {
     if (name === 'lactose') {
-      solution.style.fillOpacity = 0.4 + (value / 1000) * 0.6;
+      lactoseToOpacity();
     }
   });
 </script>

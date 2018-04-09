@@ -5,6 +5,10 @@ const MAX_TIME = 10; // min
 
 class Model {
   constructor () {
+    this.startCallbacks = [];
+    this.stopCallbacks = [];
+    this.stepCallbacks = [];
+    this.inputChangeCallbacs = [];
     // Inputs:
     this.ph = 7;
     this.lactose = 500;
@@ -24,6 +28,11 @@ class Model {
     return this.lactose <= 0 || this.time > MAX_TIME
   }
 
+  set (name, value) {
+    this[name] = value;
+    this.inputChangeCallbacs.forEach(c => c(name, value));
+  }
+
   start () {
     this.phFunc = d3.scaleLinear()
       .domain(this.phFuncDef.map(p => p[0]))
@@ -33,14 +42,12 @@ class Model {
       .range(this.temperatureFuncDef.map(p => p[1]));
 
     this._intId = setInterval(this.step, STEP_INTERVAL);
-    window.document.body.style.background = 'red';
-    this.startCallback();
+    this.startCallbacks.forEach(c => c());
   }
 
   stop () {
     clearInterval(this._intId);
-    window.document.body.style.background = 'white';
-    this.stopCallback();
+    this.stopCallbacks.forEach(c => c())
   }
 
   getSpeed () {
@@ -57,7 +64,7 @@ class Model {
     const diff = this.lactose * speed * MIN_PER_STEP;
     this.glucose += diff;
     this.lactose -= diff;
-    this.stepCallback();
+    this.stepCallbacks.forEach(c => c())
   }
 }
 

@@ -23,19 +23,19 @@ registerCustomFunc('step', function(content) {
 phone.addListener('set', function (content) {
   switch(content.name) {
     case 'temperature':
-      model.temperature = content.value;
+      model.set('temperature', content.value);
       break;
     case 'ph':
-      model.ph = content.value;
+      model.set('ph', content.value);
       break;
     case 'lactose':
-      model.lactose = content.value;
+      model.set('lactose', content.value);
       break;
     case 'temperatureFuncDef':
-      model.temperatureFuncDef = content.value;
+      model.set('temperatureFuncDef', content.value);
       break;
     case 'phFuncDef':
-      model.phFuncDef = content.value;
+      model.set('phFuncDef', content.value);
       break;
   }
 });
@@ -45,10 +45,10 @@ function getOutputs() {
     time: model.time,
     glucose: model.glucose
   };
-};
+}
 
 
-model.stepCallback = function () {
+model.stepCallbacks.push(function () {
   // We could also write:
   // phone.post('outputs', { ... });
   // phone.post('tick');
@@ -56,15 +56,15 @@ model.stepCallback = function () {
   phone.post('tick', {
     outputs: getOutputs()
   });
-};
+});
 
-model.startCallback = function () {
+model.startCallbacks.push(function () {
   phone.post('play.iframe-model');
-};
+});
 
-model.stopCallback = function () {
+model.stopCallbacks.push(function () {
   phone.post('stop.iframe-model');
-};
+});
 
 phone.initialize();
 // Set initial output values.

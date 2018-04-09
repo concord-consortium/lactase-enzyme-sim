@@ -9,15 +9,59 @@
     body {
       font: 12px verdana, arial, helvetica, sans-serif;
       list-style-type: none;
-      background: white;
     }
     html, body, #app {
       height: 100%;
     }
+    img {
+      /*border: 1px solid black;*/
+      display: block;
+    }
+    #glucose-meter {
+      width: 100%;
+      position: absolute;
+      top: 0;
+      margin-bottom: 10px;
+      -webkit-transition: margin-top 1s;
+      -moz-transition: margin-top 1s;
+      -ms-transition: margin-top 1s;
+      -o-transition: margin-top 1s;
+      transition: margin-top 1s;
+    }
+    #glucose-meter.active {
+      margin-top: 47%;
+    }
+    #reading {
+      position: absolute;
+      top: 37%;
+      width: 100%;
+      text-align: center;
+      margin-left: -6%;
+      font-size: 14px;
+    }
+    #tube {
+      position: absolute;
+      top: 0;
+      margin-top: 140%;
+    }
+    #solution {
+      fill: #eee;
+      fill-opacity: 0.5577;
+    }
   </style>
 </head>
 <body>
-<div id="app"></div>
+<div id="app">
+  <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="-47 -285 162.2 552">
+    <path id="solution"
+          d="M34.573,260.001h-.94661A32.225,32.225,0,0,1,9.849,249.22232,38.6358,38.6358,0,0,1,0,223.2004V.00063L.00062,0,68.19943.00063h0L68.2.00127,68.19943,223.2004h0C68.19943,243.52482,53.14438,260.001,34.573,260.001Z"/>
+  </svg>
+  <img id="tube" src="img/test-tube.svg" width="100%">
+  <div id="glucose-meter">
+    <img src="img/glucose-meter2.svg" width="100%">
+    <div id="reading"></div>
+  </div>
+</div>
 <script src="https://d3js.org/d3-array.v1.min.js"></script>
 <script src="https://d3js.org/d3-collection.v1.min.js"></script>
 <script src="https://d3js.org/d3-color.v1.min.js"></script>
@@ -28,5 +72,25 @@
 <script src="lib/shutterbug.js"></script>
 <script src="model.js"></script>
 <script src="lab-integration.js"></script>
+<script>
+  var glucoseMeter = document.getElementById('glucose-meter');
+  var reading = document.getElementById('reading');
+  var solution = document.getElementById('solution');
+
+  model.startCallbacks.push(function () {
+    glucoseMeter.classList.add('active');
+  });
+  model.stopCallbacks.push(function () {
+    glucoseMeter.classList.remove('active');
+  });
+  model.stepCallbacks.push(function () {
+    reading.textContent = model.glucose.toFixed(2);
+  });
+  model.inputChangeCallbacs.push(function (name, value) {
+    if (name === 'lactose') {
+      solution.style.fillOpacity = 0.4 + (value / 1000) * 0.6;
+    }
+  });
+</script>
 </body>
 </html>

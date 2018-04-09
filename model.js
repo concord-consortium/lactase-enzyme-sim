@@ -59,12 +59,13 @@ class Model {
       this.stop();
       return;
     }
+    this.stepCallbacks.forEach(c => c());
+
     this.time += MIN_PER_STEP;
     const speed = this.getSpeed();
     const diff = this.lactose * speed * MIN_PER_STEP;
     this.glucose += diff;
     this.lactose -= diff;
-    this.stepCallbacks.forEach(c => c())
   }
 }
 

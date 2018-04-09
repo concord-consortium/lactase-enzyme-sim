@@ -67,5 +67,3 @@ model.stopCallbacks.push(function () {
 });
 
 phone.initialize();
-// Set initial output values.
-phone.post('outputs', getOutputs());

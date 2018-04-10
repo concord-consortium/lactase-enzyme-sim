@@ -13,10 +13,6 @@
     html, body, #app {
       height: 100%;
     }
-    img {
-      /*border: 1px solid black;*/
-      display: block;
-    }
     #glucose-meter {
       width: 100%;
       position: absolute;
@@ -28,21 +24,35 @@
       -o-transition: margin-top 1s;
       transition: margin-top 1s;
     }
+    #glucose-meter img {
+      width: 60%;
+      display: block;
+      margin: 2% auto 0 auto;
+    }
     #glucose-meter.active {
-      margin-top: 47%;
+      margin-top: 40%;
     }
     #reading {
       position: absolute;
-      top: 37%;
+      top: 28%;
       width: 100%;
       text-align: center;
-      margin-left: -6%;
-      font-size: 14px;
+      margin-left: -7%;
+      font-size: 12px;
     }
-    #tube {
+    #tube-front, #tube-back {
+      width: 66%;
       position: absolute;
-      top: 0;
-      margin-top: 140%;
+      top: 47%;
+      /* left = 50% - width / 2 */
+      left: 17%;
+    }
+    #solution-svg {
+      width: 66%;
+      position: absolute;
+      top: 47%;
+      /* left = 50% - width / 2 */
+      left: 17%;
     }
     #solution {
       fill: #eee;
@@ -52,20 +62,17 @@
 </head>
 <body>
 <div id="app">
-  <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="-47 -285 162.2 552">
-    <path id="solution"
-          d="M34.573,260.001h-.94661A32.225,32.225,0,0,1,9.849,249.22232,38.6358,38.6358,0,0,1,0,223.2004V.00063L.00062,0,68.19943.00063h0L68.2.00127,68.19943,223.2004h0C68.19943,243.52482,53.14438,260.001,34.573,260.001Z"/>
-  </svg>
-  <img id="tube" src="img/test-tube.svg" width="100%">
+  <img id="tube-back" src="img/tube-back.png">
   <div id="glucose-meter">
-    <img src="img/glucose-meter2.svg" width="100%">
+    <img src="img/glucose-meter2.svg">
     <div id="reading"></div>
   </div>
+  <svg xmlns="http://www.w3.org/2000/svg" id="solution-svg" viewBox="-47 -58 162.2 552">
+    <path id="solution" d="M34.573,260.001h-.94661A32.225,32.225,0,0,1,9.849,249.22232,38.6358,38.6358,0,0,1,0,223.2004V.00063L.00062,0,68.19943.00063h0L68.2.00127,68.19943,223.2004h0C68.19943,243.52482,53.14438,260.001,34.573,260.001Z"/>
+  </svg>
+  <img id="tube-front" src="img/tube-front.png">
 </div>
 <script src="https://d3js.org/d3-array.v1.min.js"></script>
-<script src="https://d3js.org/d3-collection.v1.min.js"></script>
-<script src="https://d3js.org/d3-color.v1.min.js"></script>
-<script src="https://d3js.org/d3-format.v1.min.js"></script>
 <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
 <script src="https://d3js.org/d3-scale.v2.min.js"></script>
 <script src="lib/iframe-phone.js"></script>
@@ -78,7 +85,10 @@
   var solution = document.getElementById('solution');
 
   function lactoseToOpacity () {
-    solution.style.fillOpacity = 0.4 + (model.lactose / 1000) * 0.6;
+    solution.style.fillOpacity = 0.35 + (model.lactose / 1000) * 0.55;
+  }
+  function setReadingFontSize() {
+    reading.style.fontSize = (window.innerWidth * 0.08) + 'px';
   }
 
   model.startCallbacks.push(function () {
@@ -96,6 +106,9 @@
       lactoseToOpacity();
     }
   });
+  window.addEventListener('resize', setReadingFontSize);
+
+  setReadingFontSize();
 </script>
 </body>
 </html>

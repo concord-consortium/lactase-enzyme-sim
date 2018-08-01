@@ -67,3 +67,4 @@ model.stopCallbacks.push(function () {
 });
 
 phone.initialize();
+phone.post('outputs', getOutputs());

@@ -31,7 +31,7 @@
       margin: 2% auto 0 auto;
     }
     #glucose-meter.active {
-      margin-top: 40%;
+      margin-top: 31%;
     }
     #reading {
       position: absolute;
@@ -94,10 +94,11 @@
 
   model.startCallbacks.push(function () {
     glucoseMeter.classList.add('active');
+    setTimeout(function(){ glucoseMeter.classList.remove('active'); }, 1500);
   });
-  model.stopCallbacks.push(function () {
-    glucoseMeter.classList.remove('active');
-  });
+//  model.stopCallbacks.push(function () {
+//    glucoseMeter.classList.remove('active');
+//  });
   model.stepCallbacks.push(function () {
     reading.textContent = model.glucose.toFixed(2);
     lactoseToOpacity();
